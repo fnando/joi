@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.authors = ["Nando Vieira"]
   spec.email   = ["me@fnando.com"]
 
-  spec.summary     = "A minitest test runner. Supports Rails projects."
+  spec.summary     = "Autorun your minitest tests. Supports Rails projects."
   spec.description = spec.summary
   spec.license     = "MIT"
   spec.required_ruby_version = Gem::Requirement.new(">= 2.7.0")
