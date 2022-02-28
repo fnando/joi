@@ -36,11 +36,12 @@ module Joi
 
         parser.parse!(argv)
 
-        runner = Runner.new
+        runner = Runner.new(options: options)
 
-        trap("SIGINT") { exit! }
+        trap("INT") { runner.run_all }
+        trap("QUIT") { exit! }
 
-        runner.start(options: options)
+        runner.start
       end
     end
   end

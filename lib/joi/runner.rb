@@ -2,16 +2,26 @@
 
 module Joi
   class Runner
-    attr_reader :root_dir, :watchers
+    attr_reader :root_dir, :watchers, :preset
 
-    def initialize(root_dir = Dir.pwd)
+    def initialize(
+      options:,
+      root_dir: Dir.pwd,
+      preset: Presets::Default.new(self, options)
+    )
       @root_dir = Pathname.new(root_dir)
       @watchers = []
+      @preset = preset
     end
 
-    def start(options:, preset: Presets::Default)
-      preset.call(self, options)
-      preset.run_all(options)
+    def run_all
+      watchers.each {|watcher| watcher[:thread]&.kill }
+      preset.run_all
+    end
+
+    def start
+      preset.register
+      run_all
 
       listener = Listen.to(
         root_dir.to_s,

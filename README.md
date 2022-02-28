@@ -35,6 +35,9 @@ will run only matching test files (e.g. `app/models/user.rb` changes will run
 tests are executed. Any `.rb` file that's either created or removed file will
 also trigger a full suite run.
 
+You can use `SIGINT` (ctrl-c) to run all tests. To stop joi, use `SIGQUIT`
+(ctrl-\\).
+
 Joi is even more useful if you use
 [test_notifier](https://github.com/fnando/test_notifier).
 

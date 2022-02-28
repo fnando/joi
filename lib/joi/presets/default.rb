@@ -3,7 +3,14 @@
 module Joi
   module Presets
     class Default
-      def self.run_all(options)
+      attr_reader :options, :runner
+
+      def initialize(runner, options)
+        @runner = runner
+        @options = options
+      end
+
+      def run_all
         if options[:rails]
           run_rails_test(options, [])
         else
@@ -11,7 +18,7 @@ module Joi
         end
       end
 
-      def self.call(runner, options)
+      def register
         run = lambda do |paths|
           system("clear")
 
@@ -54,7 +61,7 @@ module Joi
         )
       end
 
-      def self.run_rails_test(options, test_paths)
+      def run_rails_test(options, test_paths)
         command = []
         command += %w[bundle exec] if options[:bundler]
         command += %w[rails test]
@@ -63,7 +70,7 @@ module Joi
         run(nil, command)
       end
 
-      def self.run_rake_test(options, test_paths)
+      def run_rake_test(options, test_paths)
         command = []
         command += %w[bundle exec] if options[:bundler]
         command += %w[rake test]
@@ -77,7 +84,7 @@ module Joi
         end
       end
 
-      def self.env_vars(env)
+      def env_vars(env)
         return unless env
 
         env
@@ -85,7 +92,7 @@ module Joi
           .join(" ")
       end
 
-      def self.run(env, command)
+      def run(env, command)
         puts [
           "\e[37m$",
           *command.map {|arg| Shellwords.shellescape(arg) },

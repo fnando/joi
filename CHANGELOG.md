@@ -11,6 +11,11 @@ Prefix your message with one of the following:
 - [Security] in case of vulnerabilities.
 -->
 
+## Unreleased
+
+- [Changed] SIGINT (ctrl-c) will run all tests.
+- [Added] SIGQUIT (ctrl-\\) will stop joi.
+
 ## v0.0.1
 
 - Initial release.
