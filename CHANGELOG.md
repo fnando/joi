@@ -11,6 +11,12 @@ Prefix your message with one of the following:
 - [Security] in case of vulnerabilities.
 -->
 
+## v0.0.3
+
+- [Fixed] Only listen to `.rb` files.
+- [Added] `--debug` will output additional info to help you understand why or
+  why not tests are being executed.
+
 ## v0.0.2
 
 - [Changed] SIGINT (ctrl-c) will run all tests.
