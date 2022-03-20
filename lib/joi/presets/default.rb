@@ -93,12 +93,10 @@ module Joi
       end
 
       def run(env, command)
-        puts [
-          "\e[37m$",
+        runner.log_command([
           *command.map {|arg| Shellwords.shellescape(arg) },
-          env_vars(env),
-          "\e[0m"
-        ].compact.join(" ")
+          env_vars(env)
+        ].join(" "))
 
         system(env || {}, *command)
       end

@@ -8,10 +8,20 @@ module Joi
       @argv = argv
     end
 
+    def dot_rails_file?
+      File.file?(File.join(Dir.pwd, ".rails"))
+    end
+
+    def gemfile?
+      File.file?(File.join(Dir.pwd, "Gemfile")) ||
+        File.file?(File.join(Dir.pwd, "gems.rb"))
+    end
+
     def options
       @options ||= {
-        rails: File.file?(File.join(Dir.pwd, ".rails")),
-        bundler: true
+        rails: dot_rails_file?,
+        bundler: gemfile?,
+        debug: false
       }
     end
 
@@ -29,7 +39,11 @@ module Joi
           options[:rails] = rails
         end
 
-        parser.on("-h", "--help", "Prints this help") do
+        parser.on("--debug", "Enable debug output.") do |debug|
+          options[:debug] = debug
+        end
+
+        parser.on("-h", "--help", "Prints this help.") do
           puts parser
           exit
         end
@@ -37,6 +51,9 @@ module Joi
         parser.parse!(argv)
 
         runner = Runner.new(options: options)
+
+        runner.debug(".rails file found?", dot_rails_file?)
+        runner.debug("options:", options)
 
         trap("INT") { runner.run_all }
         trap("QUIT") { exit! }

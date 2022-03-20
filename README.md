@@ -26,7 +26,8 @@ $ joi -h
 Usage: joi [OPTIONS]
     -b, --[no-]bundler               Use bundler to run commands.
         --rails                      Use this in Rails projects.
-    -h, --help                       Prints this help
+        --debug                      Enable debug output.
+    -h, --help                       Prints this help.
 ```
 
 Only `.rb` files are watched. Changes on `lib/**/*.rb` and `app/**/*.rb` files
@@ -34,6 +35,9 @@ will run only matching test files (e.g. `app/models/user.rb` changes will run
 `test/models/user_test.rb` tests). If no matching test file is found, then all
 tests are executed. Any `.rb` file that's either created or removed file will
 also trigger a full suite run.
+
+To avoid passing `--rails`, you can create a `.rails` file at the project's root
+directory.
 
 You can use `SIGINT` (ctrl-c) to run all tests. To stop joi, use `SIGQUIT`
 (ctrl-\\).

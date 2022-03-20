@@ -2,13 +2,14 @@
 
 module Joi
   class Runner
-    attr_reader :root_dir, :watchers, :preset
+    attr_reader :root_dir, :watchers, :preset, :options
 
     def initialize(
       options:,
       root_dir: Dir.pwd,
       preset: Presets::Default.new(self, options)
     )
+      @options = options
       @root_dir = Pathname.new(root_dir)
       @watchers = []
       @preset = preset
@@ -25,11 +26,18 @@ module Joi
 
       listener = Listen.to(
         root_dir.to_s,
-        ignore: [%r{(public|node_modules|assets|vendor)/}]
+        ignore: [%r{(public|node_modules|assets|vendor)/}],
+        only: [/\.(rb)$/]
       ) do |modified, added, removed|
         modified = convert_to_relative_paths(modified)
         added = convert_to_relative_paths(added)
         removed = convert_to_relative_paths(removed)
+
+        if options[:debug]
+          debug("added files:", added.map(&:to_s).inspect)
+          debug("modified files:", modified.map(&:to_s).inspect)
+          debug("removed files:", removed.map(&:to_s).inspect)
+        end
 
         watchers.each do |watcher|
           run_watcher(
@@ -46,6 +54,16 @@ module Joi
       sleep
     end
 
+    def debug(*args)
+      return unless options[:debug]
+
+      puts ["\e[37m[debug]\e[0m", *args].join(" ")
+    end
+
+    def log_command(command)
+      puts ["\e[37m$ ", command, "\e[0m"].join
+    end
+
     def run_watcher(watcher, modified:, added:, removed:)
       paths = []
       paths += modified if watcher[:on].include?(:modified)
@@ -55,7 +73,12 @@ module Joi
         watcher[:pattern].any? {|pattern| path.to_s.match?(pattern) }
       end
 
-      return unless paths.any?
+      unless paths.any?
+        debug("skipping watcher:", watcher.slice(:on, :pattern))
+        return
+      end
+
+      debug("running watcher:", watcher.slice(:on, :pattern))
 
       watcher[:thread]&.kill
       watcher[:thread] = Thread.new { watcher[:command].call(paths) }
